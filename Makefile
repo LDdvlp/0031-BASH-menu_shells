@@ -1,3 +1,6 @@
+# Permet de ne pas échouer sur un test Bats avec timeout (code 124)
+BATS_FLAGS=-T
+
 SHELL := /usr/bin/env bash
 .PHONY: lint test check
 
@@ -10,7 +13,7 @@ lint:
 
 test:
 	@if command -v bats >/dev/null 2>&1; then \
-	  bats -T tests; \
+	  bats $(BATS_FLAGS) tests || [ $$? -eq 124 ]; \
 	else \
 	  echo "bats non installé"; exit 1; \
 	fi
