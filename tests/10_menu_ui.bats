@@ -6,11 +6,10 @@ setup() {
 }
 
 @test "menu.sh affiche le menu principal" {
-  # On capture uniquement les premières lignes de sortie
   run bash -c "timeout 2s \"$MENU\" < /dev/null || true"
-  [ "$status" -ge 0 ]  # on accepte 0 ou 124 (timeout)
-  [[ "$output" == *"Menu Shells"* ]]
+  [ "$status" -ge 0 ]    # 0 ou 124 accepté
+  [[ "$output" == *"MENU SHELLS"* ]]
   [[ "$output" == *"1) Bash"* ]]
   [[ "$output" == *"2) Zsh"* ]]
-  [[ "$output" == *"3) Infos"* ]]
+  [[ "$output" == *"4) Thème"* ]]
 }

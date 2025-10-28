@@ -18,7 +18,10 @@ normalize_unix() {
 
 
 # --- RC & bin gérés par Menu Shells ---
-mkdir -p "$HOME/.menu-shells/bin" "$HOME/.menu-shells/rc"
+mkdir -p "$HOME/.menu-shells" "$HOME/.menu-shells/bin" "$HOME/.menu-shells/rc"
+if [[ ! -f "$HOME/.menu-shells/config" ]]; then
+  printf 'THEME=dark\n' > "$HOME/.menu-shells/config"
+fi
 
 # Installe le script d'info système
 cp -f "./scripts/bin/sys_info.sh" "$HOME/.menu-shells/bin/sys_info.sh"
