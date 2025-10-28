@@ -1,0 +1,15 @@
+# ~/.menu-shells/rc/bash_rc (géré par Menu Shells)
+
+# Sourcer tes dotfiles s'ils existent
+[ -r "$HOME/.pathes" ] && . "$HOME/.pathes"
+[ -r "$HOME/.functions" ] && . "$HOME/.functions"
+[ -r "$HOME/.colors" ] && . "$HOME/.colors"
+[ -r "$HOME/.scripts_aliases" ] && . "$HOME/.scripts_aliases"
+
+# Afficher les infos système
+if [ -x "$HOME/.menu-shells/bin/sys_info.sh" ]; then
+  "$HOME/.menu-shells/bin/sys_info.sh"
+fi
+
+# Prompt minimal si rien d'autre n'est défini
+: "${PS1:=\u@\h:\w\$ }"

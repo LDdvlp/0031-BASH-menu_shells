@@ -20,17 +20,20 @@ main() {
     show_menu
     read -r -p "Votre choix: " choice
     case "${choice}" in
-      1) ok "Lancement de bash..."; exec bash -i ;;
+      1)
+        ok "Lancement de bash..."
+        exec bash --rcfile "$HOME/.menu-shells/rc/bash_rc" -i
+        ;;
       2)
-         env_kind="$(detect_env)"
-         if [[ "$env_kind" == "MSYS/MINGW" ]]; then
-           ok "Lancement de zsh (propre Git Bash)…"
-           exec zsh -f -i
-         else
-           ok "Lancement de zsh…"
-           exec zsh -l
-         fi
-         ;;
+        env_kind="$(detect_env)"
+        if [[ "$env_kind" == "MSYS/MINGW" ]]; then
+          ok "Lancement de zsh (propre Git Bash)…"
+          exec zsh -f -i -c '[[ -r "$HOME/.menu-shells/rc/zsh_rc" ]] && source "$HOME/.menu-shells/rc/zsh_rc"; exec zsh -i'
+        else
+          ok "Lancement de zsh…"
+          exec zsh -i -c '[[ -r "$HOME/.menu-shells/rc/zsh_rc" ]] && source "$HOME/.menu-shells/rc/zsh_rc"; exec zsh -i'
+        fi
+        ;;
       3) ok "Environnement: $(detect_env)"; uname -a || true ;;
       q|Q) ok "Au revoir."; exit 0 ;;
       *) warn "Choix invalide." ;;

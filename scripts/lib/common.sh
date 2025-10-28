@@ -9,7 +9,7 @@ RED=$'\033[31m'
 BLUE=$'\033[34m'
 # shellcheck disable=SC2034
 BOLD=$'\033[1m'
-
+    
 
 detect_env() {
   if grep -qi 'microsoft' /proc/version 2>/dev/null; then

@@ -1,0 +1,12 @@
+# ~/.menu-shells/rc/zsh_rc (géré par Menu Shells)
+
+[[ -r "$HOME/.pathes" ]] && source "$HOME/.pathes"
+[[ -r "$HOME/.functions" ]] && source "$HOME/.functions"
+[[ -r "$HOME/.colors" ]] && source "$HOME/.colors"
+[[ -r "$HOME/.scripts_aliases" ]] && source "$HOME/.scripts_aliases"
+
+if [[ -x "$HOME/.menu-shells/bin/sys_info.sh" ]]; then
+  "$HOME/.menu-shells/bin/sys_info.sh"
+fi
+
+[[ -z "$PS1" ]] && PS1="%n@%m %1~ %# "
