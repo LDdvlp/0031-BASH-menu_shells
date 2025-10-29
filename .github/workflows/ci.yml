@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y make shellcheck bats
+      - name: Lint
+        run: make lint
+      - name: Test
+        run: make test
+
+  windows-gitbash:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install deps (Chocolatey)
+        run: |
+          choco install -y shellcheck || echo "shellcheck not installed via choco"
+          choco install -y bats || choco install -y bats-core || echo "bats not installed via choco"
+      - name: Versions
+        run: |
+          bash --version | head -n1 || true
+          shellcheck --version || true
+          bats --version || true
+      - name: Lint
+        run: make lint
+      - name: Test
+        run: make test
