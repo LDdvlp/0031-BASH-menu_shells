@@ -27,9 +27,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install deps (Chocolatey)
         run: |
-          choco install -y shellcheck || echo "shellcheck not installed via choco"
-          choco install -y bats || choco install -y bats-core || echo "bats not installed via choco"
-      - name: Versions
+          choco install -y shellcheck || echo "shellcheck via choco not available"
+          choco install -y bats || choco install -y bats-core || echo "bats via choco not available"
+      - name: Print versions
         run: |
           bash --version | head -n1 || true
           shellcheck --version || true
