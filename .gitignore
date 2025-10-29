@@ -1,0 +1,24 @@
+cat > .gitignore <<'EOF'
+# --- Éditeurs ---
+.vscode/
+.idea/
+*.code-workspace
+
+# --- Système ---
+.DS_Store
+Thumbs.db
+
+# --- Logs & temporaires ---
+*.log
+*.tmp
+*.swp
+*.bak
+
+# --- Binaries & archives ---
+*.tar.gz
+*.zip
+
+# --- Node / Python / Build cache (sécurité) ---
+node_modules/
+__pycache__/
+EOF
