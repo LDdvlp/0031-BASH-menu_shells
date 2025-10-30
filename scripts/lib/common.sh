@@ -47,6 +47,12 @@ save_theme() {
 }
 
 detect_env() {
+  # Permet aux tests/CI de forcer l'environnement simulé
+  if [[ -n "${MENU_SHELLS_FORCE_ENV-}" ]]; then
+    echo "${MENU_SHELLS_FORCE_ENV}"
+    return
+  fi
+
   if grep -qi 'microsoft' /proc/version 2>/dev/null; then
     echo "WSL"
   elif [[ -n "${MSYSTEM-}" ]] || [[ "${OSTYPE-}" == msys* || "${OSTYPE-}" == mingw* ]]; then
@@ -55,6 +61,7 @@ detect_env() {
     echo "Linux/Unix"
   fi
 }
+
 
 ok()   { printf "%s✔%s %s\n" "$GREEN"  "$RESET" "${1:-}"; }
 warn() { printf "%s!%s %s\n"  "$YELLOW" "$RESET" "${1:-}"; }
