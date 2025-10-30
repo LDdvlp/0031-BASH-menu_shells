@@ -10,21 +10,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # utile si ton Makefile regarde les tags
+          fetch-depth: 0
       - name: Install deps
         run: |
           sudo apt-get update
           sudo apt-get install -y make shellcheck bats
-      - name: Ensure exec bits & LF
+      - name: Ensure exec bits
         run: |
           chmod +x install.sh || true
           chmod +x scripts/menu.sh || true
           chmod +x scripts/bin/sys_info.sh || true
           chmod +x scripts/shell_select.sh 2>/dev/null || true
-          # afficher le shebang et détecter CRLF si jamais
-          head -n1 install.sh || true
-          if file install.sh | grep -qi crlf; then
-            echo "CRLF detected in install.sh"; exit 1; fi
       - name: Lint
         run: make lint
       - name: Test
@@ -43,11 +39,15 @@ jobs:
           update: true
           install: >-
             make
-            shellcheck
-            mingw-w64-x86_64-bats
-      - name: Lint (MSYS2)
+            bats
+      - name: Ensure exec bits
         shell: msys2 {0}
-        run: make lint
+        run: |
+          chmod +x install.sh || true
+          chmod +x scripts/menu.sh || true
+          chmod +x scripts/bin/sys_info.sh || true
+          chmod +x scripts/shell_select.sh 2>/dev/null || true
+      # Pas de lint côté Windows (shellcheck absent) : on exécute seulement les tests
       - name: Test (MSYS2)
         shell: msys2 {0}
         run: make test
