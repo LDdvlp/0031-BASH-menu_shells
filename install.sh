@@ -118,8 +118,8 @@ normalize_unix "$HOME/.menu-shells/config"
 # Installe sys_info
 say "Installation du binaire sys_info"
 cp -f "${ROOT_DIR}/scripts/bin/sys_info.sh" "$HOME/.menu-shells/bin/sys_info.sh"
-chmod +x "$HOME/.menu-shells/bin/sys_info.sh"
 normalize_unix "$HOME/.menu-shells/bin/sys_info.sh"
+chmod +x "$HOME/.menu-shells/bin/sys_info.sh"
 ok  "~/.menu-shells/bin/sys_info.sh installé"
 
 # Installe RC gérés (bash/zsh)
