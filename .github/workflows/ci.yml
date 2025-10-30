@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # utile si ton Makefile regarde les tags
       - name: Install deps
         run: |
           sudo apt-get update
@@ -18,23 +20,24 @@ jobs:
       - name: Test
         run: make test
 
-  windows-gitbash:
+  windows-msys2:
     runs-on: windows-latest
-    defaults:
-      run:
-        shell: bash
     steps:
       - uses: actions/checkout@v4
-      - name: Install deps (Chocolatey)
-        run: |
-          choco install -y shellcheck || echo "shellcheck via choco not available"
-          choco install -y bats || choco install -y bats-core || echo "bats via choco not available"
-      - name: Print versions
-        run: |
-          bash --version | head -n1 || true
-          shellcheck --version || true
-          bats --version || true
-      - name: Lint
+        with:
+          fetch-depth: 0
+      - name: Set up MSYS2 (MINGW64)
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            make
+            shellcheck
+            mingw-w64-x86_64-bats
+      - name: Lint (MSYS2)
+        shell: msys2 {0}
         run: make lint
-      - name: Test
+      - name: Test (MSYS2)
+        shell: msys2 {0}
         run: make test
