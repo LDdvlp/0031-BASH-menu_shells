@@ -53,3 +53,11 @@ package: clean
 .PHONY: clean
 clean:
 	@rm -rf "$(DIST_DIR)"
+
+SHELL := /usr/bin/env bash
+
+.PHONY: changelog
+changelog:
+	@REPO_URL="https://github.com/LDdvlp/0031-BASH-menu_shells" bash scripts/tools/gen_changelog.sh
+	@echo "✅ CHANGELOG.md updated"
+
