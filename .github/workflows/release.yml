@@ -1,9 +1,17 @@
-name: Release
+name: 🚀 Release
 
 on:
+  # ⬇️ Se déclenche automatiquement sur tout nouveau tag commençant par v
   push:
     tags:
       - 'v*'
+  # ⬇️ Permet aussi de lancer manuellement la release depuis GitHub Actions
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version à publier (ex: v0.4.0-alpha.4)'
+        required: false
+        default: ''
 
 permissions:
   contents: write   # ⬅️ nécessaire pour créer la release
@@ -11,41 +19,56 @@ permissions:
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # ⬅️ récupère les tags pour git describe si besoin
+          fetch-depth: 0   # ⬅️ récupère l’historique complet et les tags
 
       - name: Install deps
         run: |
-          sudo apt-get update
+          sudo apt-get update -y
           sudo apt-get install -y make
 
-      - name: Set VERSION from tag
-        run: echo "VERSION=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+      - name: Set VERSION (from tag or manual input)
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_ENV
+          else
+            echo "VERSION=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+          fi
+          echo "Version utilisée: $VERSION"
+
       - name: Ensure exec bits & LF
         run: |
           chmod +x install.sh || true
           chmod +x scripts/menu.sh || true
           chmod +x scripts/bin/sys_info.sh || true
           chmod +x scripts/shell_select.sh 2>/dev/null || true
-          # afficher le shebang et détecter CRLF si jamais
-          head -n1 install.sh || true
+          # Vérifie la présence de CRLF accidentels
           if file install.sh | grep -qi crlf; then
-            echo "CRLF detected in install.sh"; exit 1; fi
+            echo "⚠️ CRLF detected in install.sh"; exit 1; fi
 
       - name: Build package
         run: make package
 
-      - name: Create Release
+      - name: Verify build output
+        run: |
+          ls -lh dist || (echo "❌ No dist directory found" && exit 1)
+          if [ ! -f "dist/menu-shells-${VERSION}.tar.gz" ]; then
+            echo "❌ Package not found: dist/menu-shells-${VERSION}.tar.gz"
+            exit 1
+          fi
+
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_name }}
-          name: ${{ github.ref_name }}
-          prerelease: ${{ contains(github.ref_name, '-alpha') || contains(github.ref_name, '-beta') || contains(github.ref_name, '-rc') }}
+          tag_name: ${{ env.VERSION }}
+          name: ${{ env.VERSION }}
+          prerelease: ${{ contains(env.VERSION, '-alpha') || contains(env.VERSION, '-beta') || contains(env.VERSION, '-rc') }}
           generate_release_notes: true
 
-      - name: Upload asset
+      - name: Upload release asset
         uses: softprops/action-gh-release@v2
         with:
           files: dist/menu-shells-${{ env.VERSION }}.tar.gz
