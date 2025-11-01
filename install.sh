@@ -44,11 +44,13 @@ update_rc() {
   local rc_file="$1"
   local tmp
   tmp="$(mktemp)"
-  local end=.*?
-  local end="# <<< MENU_SHELLS MANAGED <<<"
+
+  # ✨ marqueurs attendus par les tests (exact match)
+  local begin=">>> menu-shells >>>"
+  local end="<<< menu-shells <<<"
   local include="[[ -f \"$ROOT/menu.sh\" ]] && source \"$ROOT/menu.sh\""
 
-  # Nettoyage ancien bloc s’il existe
+  # Retire l’ancien bloc si présent
   if [[ -f "$rc_file" ]]; then
     awk -v b="$begin" -v e="$end" '
       $0 == b {inblock=1; next}
@@ -59,7 +61,7 @@ update_rc() {
     : >"$tmp"
   fi
 
-  # Ajout du nouveau bloc (version SC2129 friendly)
+  # Ajoute le nouveau bloc (évite SC2129)
   {
     printf '%s\n' "$begin"
     printf '%s\n' "$include"
@@ -69,6 +71,7 @@ update_rc() {
   mv "$tmp" "$rc_file"
   ok "$rc_file mis à jour"
 }
+
 
 # --- Mise à jour des rc utilisateurs ---
 for f in "$HOME/.bashrc" "$HOME/.zshrc"; do
