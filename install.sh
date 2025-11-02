@@ -45,12 +45,18 @@ update_rc() {
   local tmp
   tmp="$(mktemp)"
 
-  # ✨ marqueurs attendus par les tests (exact match)
+  # ✨ Marqueurs de gestion du bloc Menu Shells
   local begin=">>> menu-shells >>>"
   local end="<<< menu-shells <<<"
-  local include="[[ -f \"$ROOT/menu.sh\" ]] && source \"$ROOT/menu.sh\""
 
-  # Retire l’ancien bloc si présent
+   # 📂 Contenu à insérer dans le bloc (littéral, sans expansion immédiate)
+  local include
+  read -r -d '' include <<'EOS'
+[[ -f "$ROOT/menu.sh" ]] && source "$ROOT/menu.sh"
+[[ -f "$ROOT/shell_select.sh" ]] && source "$ROOT/shell_select.sh"
+EOS
+
+  # 🔧 Supprime tout ancien bloc déjà présent
   if [[ -f "$rc_file" ]]; then
     awk -v b="$begin" -v e="$end" '
       $0 == b {inblock=1; next}
@@ -61,16 +67,13 @@ update_rc() {
     : >"$tmp"
   fi
 
-  # Ajoute le nouveau bloc (évite SC2129)
+  # 🧱 Ajoute le nouveau bloc proprement
   {
     printf '%s\n' "$begin"
     printf '%s\n' "$include"
     printf '%s\n' "$end"
   } >>"$tmp"
 
-  mv "$tmp" "$rc_file"
-  ok "$rc_file mis à jour"
-}
 
 
 # --- Mise à jour des rc utilisateurs ---
